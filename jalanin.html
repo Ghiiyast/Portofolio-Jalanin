@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JALANIN — UI/UX Case Study</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          green: { primary: '#22C55E' },
+          blue:  { primary: '#3B82F6' },
+          orange:{ primary: '#F97316' },
+          bg:    { base: '#F8FAFC' },
+          ink:   { dark: '#0F172A', mid: '#64748B' },
+        },
+        fontFamily: {
+          sans:    ['Inter', 'sans-serif'],
+          display: ['Manrope', 'sans-serif'],
+          poppins: ['Poppins', 'sans-serif'],
+        },
+        borderRadius: {
+          '3xl': '24px',
+          '4xl': '32px',
+        },
+        boxShadow: {
+          glass: '0 8px 32px rgba(0,0,0,0.08)',
+          glow:  '0 0 40px rgba(34,197,94,.25)',
+          'glow-blue': '0 0 40px rgba(59,130,246,0.2)',
+          premium: '0 24px 64px rgba(15,23,42,0.12)',
+        }
+      }
+    }
+  };
+</script>
+
+<style>
+  /* ── Base ─────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #F8FAFC;
+    color: #0F172A;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── Custom Cursor ───────────────────────── */
+  #cursor-dot {
+    width: 8px; height: 8px;
+    background: #22C55E;
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform .15s ease, background .3s;
+  }
+  #cursor-ring {
+    width: 36px; height: 36px;
+    border: 2px solid rgba(34,197,94,.5);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform .4s cubic-bezier(.23,1,.32,1), width .3s, height .3s, border-color .3s;
+  }
+  body:hover #cursor-ring { opacity: 1; }
+
+  /* ── Animated Gradient Background ───────── */
+  .animated-gradient {
+    background: linear-gradient(135deg, #f0fdf4, #eff6ff, #fff7ed, #f0fdf4);
+    background-size: 400% 400%;
+    animation: gradientShift 12s ease infinite;
+  }
+  @keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ── Glass Card ──────────────────────────── */
+  .glass {
+    background: rgba(255,255,255,.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,.8);
+  }
+  .glass-dark {
+    background: rgba(15,23,42,.65);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,.1);
+  }
+
+  /* ── Hover Card Lift ─────────────────────── */
+  .card-lift {
+    transition: transform .3s cubic-bezier(.23,1,.32,1),
+                box-shadow .3s cubic-bezier(.23,1,.32,1);
+  }
+  .card-lift:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 32px 64px rgba(15,23,42,.14),
+                0 0 0 1px rgba(34,197,94,.12);
+  }
+
+  /* ── Floating Mockup ─────────────────────── */
+  .float-anim {
+    animation: floatY 5s ease-in-out infinite;
+  }
+  .float-anim-slow {
+    animation: floatY 7s ease-in-out infinite reverse;
+  }
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-18px); }
+  }
+
+  /* ── Gradient Text ───────────────────────── */
+  .gradient-text {
+    background: linear-gradient(135deg, #22C55E 0%, #3B82F6 60%, #F97316 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gradient-text-green-blue {
+    background: linear-gradient(135deg, #22C55E, #3B82F6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── CTA Button ──────────────────────────── */
+  .btn-primary {
+    background: linear-gradient(135deg, #22C55E, #16a34a);
+    color: #fff;
+    border-radius: 100px;
+    padding: 14px 32px;
+    font-weight: 600;
+    font-size: .95rem;
+    transition: transform .25s, box-shadow .25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,.15);
+    opacity: 0;
+    transition: opacity .25s;
+    border-radius: 100px;
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(34,197,94,.4); }
+  .btn-primary:hover::after { opacity: 1; }
+
+  .btn-outline {
+    background: transparent;
+    color: #0F172A;
+    border: 1.5px solid rgba(15,23,42,.15);
+    border-radius: 100px;
+    padding: 14px 32px;
+    font-weight: 600;
+    font-size: .95rem;
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+  .btn-outline:hover {
+    transform: translateY(-3px);
+    border-color: #22C55E;
+    box-shadow: 0 8px 32px rgba(34,197,94,.15);
+  }
+
+  /* ── Sticky Nav ──────────────────────────── */
+  #navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    transition: background .4s, backdrop-filter .4s, box-shadow .4s;
+  }
+  #navbar.scrolled {
+    background: rgba(248,250,252,.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 1px 0 rgba(15,23,42,.06);
+  }
+
+  /* ── Section Label ───────────────────────── */
+  .section-label {
+    font-family: 'Manrope', sans-serif;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #22C55E;
+  }
+
+  /* ── Timeline ────────────────────────────── */
+  .timeline-line {
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #22C55E, #3B82F6, #F97316);
+    transform: translateX(-50%);
+  }
+  .timeline-dot {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    transition: transform .3s, box-shadow .3s;
+  }
+  .timeline-dot:hover { transform: scale(1.15); }
+
+  /* ── Image Placeholder ───────────────────── */
+  .img-placeholder {
+    background: linear-gradient(135deg, #f0fdf4, #eff6ff);
+    border: 2px dashed rgba(34,197,94,.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #64748B;
+    font-size: .85rem;
+    text-align: center;
+    border-radius: 16px;
+    gap: 8px;
+  }
+
+  /* ── Before/After Slider ─────────────────── */
+  .slider-wrapper { position: relative; overflow: hidden; border-radius: 16px; }
+  .slider-handle {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 3px;
+    background: #22C55E;
+    cursor: ew-resize;
+    z-index: 10;
+  }
+  .slider-handle::after {
+    content: '⟺';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #22C55E;
+    color: #fff;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem;
+    box-shadow: 0 4px 16px rgba(34,197,94,.4);
+  }
+
+  /* ── Counter ─────────────────────────────── */
+  .counter-num {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 900;
+    font-size: 3.5rem;
+    line-height: 1;
+  }
+
+  /* ── Design Token Chip ───────────────────── */
+  .color-chip {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    transition: transform .25s, box-shadow .25s;
+    cursor: pointer;
+  }
+  .color-chip:hover { transform: scale(1.15) translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.2); }
+
+  /* ── Persona Card Hover ──────────────────── */
+  .persona-img {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: transform .3s;
+  }
+  .persona-card:hover .persona-img { transform: scale(1.08); }
+
+  /* ── Progress Bar ────────────────────────── */
+  .progress-bar {
+    height: 6px;
+    border-radius: 100px;
+    background: linear-gradient(90deg, #22C55E, #3B82F6);
+    width: 0%;
+    transition: width 1.4s cubic-bezier(.23,1,.32,1);
+  }
+
+  /* ── Noise Texture Overlay ───────────────── */
+  .noise::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* ── Glow Orbs ───────────────────────────── */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    opacity: 0.45;
+  }
+
+  /* ── Scrollbar ───────────────────────────── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #F8FAFC; }
+  ::-webkit-scrollbar-thumb { background: #22C55E; border-radius: 100px; }
+
+  /* ── Reduced Motion ──────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ── Mobile Cursor Hide ──────────────────── */
+  @media (max-width: 768px) {
+    body { cursor: auto; }
+    #cursor-dot, #cursor-ring { display: none; }
+  }
+
+  /* ── HMW Card Gradient ───────────────────── */
+  .hmw-card:nth-child(1) { border-top: 3px solid #22C55E; }
+  .hmw-card:nth-child(2) { border-top: 3px solid #3B82F6; }
+  .hmw-card:nth-child(3) { border-top: 3px solid #F97316; }
+
+  /* ── Page Load Overlay ───────────────────── */
+  #page-loader {
+    position: fixed;
+    inset: 0;
+    background: #0F172A;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    transition: opacity .6s ease, visibility .6s ease;
+  }
+  #page-loader.hidden { opacity: 0; visibility: hidden; }
+  .loader-text {
+    font-family: 'Manrope', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -.03em;
+  }
+  .loader-bar {
+    width: 200px; height: 3px;
+    background: rgba(255,255,255,.1);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .loader-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22C55E, #3B82F6);
+    border-radius: 100px;
+    animation: load 1.8s ease forwards;
+  }
+  @keyframes load { from { width: 0% } to { width: 100% } }
+
+  /* sticky prototype */
+  .sticky-proto { position: sticky; top: 100px; }
+
+  /* tag chip */
+  .tag-chip {
+    background: rgba(34,197,94,.1);
+    color: #16a34a;
+    border: 1px solid rgba(34,197,94,.2);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: .78rem;
+    font-weight: 600;
+  }
+  .tag-chip-blue {
+    background: rgba(59,130,246,.1);
+    color: #2563eb;
+    border: 1px solid rgba(59,130,246,.2);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: .78rem;
+    font-weight: 600;
+  }
+  .tag-chip-orange {
+    background: rgba(249,115,22,.1);
+    color: #ea580c;
+    border: 1px solid rgba(249,115,22,.2);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: .78rem;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body class="animated-gradient">
+
+<div id="page-loader">
+  <div class="loader-text">JALANIN</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <p style="color:rgba(255,255,255,.4);font-size:.8rem;font-family:'Inter',sans-serif">UI/UX Case Study</p>
+</div>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<nav id="navbar" class="py-4 px-6 md:px-12">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <a href="#hero" class="font-display font-900 text-xl tracking-tight text-ink-dark flex items-center gap-2">
+      <span class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold" style="background:linear-gradient(135deg,#22C55E,#3B82F6)">J</span>
+      JALANIN
+    </a>
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-ink-mid">
+      <a href="#empathize" class="hover:text-green-primary transition-colors">Empathize</a>
+      <a href="#define" class="hover:text-green-primary transition-colors">Define</a>
+      <a href="#ideate" class="hover:text-green-primary transition-colors">Ideate</a>
+      <a href="#prototype" class="hover:text-green-primary transition-colors">Prototype</a>
+      <a href="#test" class="hover:text-green-primary transition-colors">Test</a>
+    </div>
+    <a href="#prototype" class="btn-primary text-sm py-2.5 px-6">View Prototype →</a>
+  </div>
+</nav>
+
+<section id="hero" class="relative min-h-screen flex items-center overflow-hidden pt-20">
+  <div class="orb w-96 h-96 -top-24 -left-24" style="background:#22C55E"></div>
+  <div class="orb w-80 h-80 top-32 right-0" style="background:#3B82F6"></div>
+  <div class="orb w-64 h-64 bottom-0 left-1/3" style="background:#F97316;opacity:.3"></div>
+
+  <div class="max-w-7xl mx-auto px-6 md:px-12 w-full">
+    <div class="grid md:grid-cols-2 gap-16 items-center py-20">
+      <div>
+        <div class="flex items-center gap-3 mb-8" data-aos="fade-up" data-aos-delay="100">
+          <span class="tag-chip">✦ UI/UX Case Study</span>
+          <span class="tag-chip-blue">2024</span>
+          <span class="tag-chip-orange">Transportasi</span>
+        </div>
+
+        <h1 class="font-display font-900 leading-none mb-6" data-aos="fade-up" data-aos-delay="200"
+            style="font-size:clamp(3rem,8vw,6rem);letter-spacing:-.04em">
+          <span class="gradient-text">JALANIN</span><br/>
+          <span style="color:#0F172A">App Design</span>
+        </h1>
+
+        <p class="text-lg text-ink-mid leading-relaxed max-w-md mb-10" data-aos="fade-up" data-aos-delay="300">
+          Merancang ulang pengalaman transportasi online, pengiriman barang, dan pemesanan makanan yang sederhana, inklusif, dan mudah digunakan oleh semua kalangan.
+        </p>
+
+        <div class="flex flex-wrap gap-4" data-aos="fade-up" data-aos-delay="400">
+          <a href="#prototype" class="btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
+            View Prototype
+          </a>
+          <a href="#empathize" class="btn-outline">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </a>
+        </div>
+
+        <div class="flex gap-8 mt-14" data-aos="fade-up" data-aos-delay="500">
+          <div>
+            <div class="font-display font-800 text-2xl text-ink-dark" id="stat1">0</div>
+            <div class="text-xs text-ink-mid mt-1">Pengguna Diwawancara</div>
+          </div>
+          <div class="w-px bg-gray-200"></div>
+          <div>
+            <div class="font-display font-800 text-2xl text-ink-dark" id="stat2">0</div>
+            <div class="text-xs text-ink-mid mt-1">Screen Dirancang</div>
+          </div>
+          <div class="w-px bg-gray-200"></div>
+          <div>
+            <div class="font-display font-800 text-2xl text-ink-dark" id="stat3">0</div>
+            <div class="text-xs text-ink-mid mt-1">Iterasi Desain</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative flex justify-center items-center" data-aos="fade-left" data-aos-delay="300">
+        <div class="absolute w-80 h-80 rounded-full opacity-20 border border-green-primary"></div>
+        <div class="absolute w-64 h-64 rounded-full opacity-10" style="background:radial-gradient(circle,#22C55E,transparent)"></div>
+
+        <div class="relative float-anim">
+          <div class="glass rounded-4xl shadow-premium overflow-hidden" style="width:280px;padding:8px">
+            <div class="img-placeholder" style="height:560px;border-radius:24px">
+              <div style="font-size:2.5rem">📱</div>
+              <div style="font-weight:700;color:#22C55E;font-family:'Manrope',sans-serif">App Mockup</div>
+              <div style="font-size:.75rem;color:#94a3b8;max-width:160px;text-align:center">Ganti dengan screenshot Figma kamu</div>
+            </div>
+          </div>
+          <div class="absolute -top-4 -right-4 glass rounded-2xl px-4 py-3 shadow-glass float-anim-slow">
+            <div class="text-xs text-ink-mid">User Rating</div>
+            <div class="font-display font-800 text-lg text-ink-dark flex items-center gap-1">4.9 <span style="color:#F97316">★</span></div>
+          </div>
+          <div class="absolute -bottom-4 -left-4 glass rounded-2xl px-4 py-3 shadow-glass float-anim">
+            <div class="text-xs text-ink-mid">Satisfaction</div>
+            <div class="font-display font-800 text-lg gradient-text-green-blue">92%</div>
+          </div>
+        </div>
+
+        <div class="absolute right-0 top-12 float-anim-slow hidden lg:block" style="opacity:.6">
+          <div class="glass rounded-3xl shadow-glass overflow-hidden" style="width:140px;padding:6px">
+            <div class="img-placeholder" style="height:280px;border-radius:20px">
+              <div style="font-size:1.5rem">📱</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+    <div style="width:1px;height:48px;background:linear-gradient(to bottom,transparent,#64748B);animation:fadeInDown 2s ease infinite"></div>
+    <span style="font-size:.7rem;letter-spacing:.1em;color:#64748B;font-family:'Manrope',sans-serif;text-transform:uppercase">Scroll</span>
+  </div>
+</section>
+
+<section id="overview" class="py-28 px-6 md:px-12 relative">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+      <div class="section-label mb-4" data-aos="fade-up">Project Overview</div>
+      <h2 class="font-display font-800 text-4xl md:text-5xl text-ink-dark" data-aos="fade-up" data-aos-delay="100" style="letter-spacing:-.03em">
+        Tentang <span class="gradient-text">Proyek Ini</span>
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-4" data-aos="fade-up" data-aos-delay="200">
+      <div class="glass rounded-3xl p-6 card-lift col-span-1">
+        <div class="text-2xl mb-3">🎨</div>
+        <div class="text-xs text-ink-mid font-500 mb-1 uppercase tracking-wide">Role</div>
+        <div class="font-display font-700 text-ink-dark text-base">UI/UX Designer</div>
+        <div class="text-xs text-ink-mid mt-1">Research, Wireframe, Prototype</div>
+      </div>
+      <div class="glass rounded-3xl p-6 card-lift col-span-1">
+        <div class="text-2xl mb-3">⏱</div>
+        <div class="text-xs text-ink-mid font-500 mb-1 uppercase tracking-wide">Duration</div>
+        <div class="font-display font-700 text-ink-dark text-base">4 Minggu</div>
+        <div class="text-xs text-ink-mid mt-1">Sept – Nov 2024</div>
+      </div>
+      <div class="glass rounded-3xl p-6 card-lift col-span-1">
+        <div class="text-2xl mb-3">🛠</div>
+        <div class="text-xs text-ink-mid font-500 mb-1 uppercase tracking-wide">Tools</div>
+        <div class="font-display font-700 text-ink-dark text-base">Figma</div>
+        <div class="text-xs text-ink-mid mt-1">FigJam, Notion, Maze</div>
+      </div>
+      <div class="glass rounded-3xl p-6 card-lift col-span-1">
+        <div class="text-2xl mb-3">📱</div>
+        <div class="text-xs text-ink-mid font-500 mb-1 uppercase tracking-wide">Platform</div>
+        <div class="font-display font-700 text-ink-dark text-base">Android</div>
+        <div class="text-xs text-ink-mid mt-1">Mobile First</div>
+      </div>
+    </div>
+
+    <div class="mt-24">
+      <div class="text-center mb-16">
+        <div class="section-label mb-3" data-aos="fade-up">Process</div>
+        <h3 class="font-display font-800 text-3xl text-ink-dark" data-aos="fade-up" data-aos-delay="100" style="letter-spacing:-.03em">Design Thinking Process</h3>
+      </div>
+
+      <div class="relative" id="timeline">
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1 glass rounded-3xl p-6 card-lift text-center relative overflow-hidden" data-aos="fade-up" data-aos-delay="100">
+            <div class="absolute top-0 left-0 right-0 h-1" style="background:#22C55E"></div>
+            <div class="text-3xl mb-3">🔍</div>
+            <div class="font-display font-800 text-ink-dark mb-1">Empathize</div>
+            <div class="text-xs text-ink-mid">Research & Interview</div>
+          </div>
+          <div class="hidden md:flex items-center text-gray-300 text-2xl">→</div>
+          <div class="flex-1 glass rounded-3xl p-6 card-lift text-center relative overflow-hidden" data-aos="fade-up" data-aos-delay="200">
+            <div class="absolute top-0 left-0 right-0 h-1" style="background:#3B82F6"></div>
+            <div class="text-3xl mb-3">🎯</div>
+            <div class="font-display font-800 text-ink-dark mb-1">Define</div>
+            <div class="text-xs text-ink-mid">Problem Statement</div>
+          </div>
+          <div class="hidden md:flex items-center text-gray-300 text-2xl">→</div>
+          <div class="flex-1 glass rounded-3xl p-6 card-lift text-center relative overflow-hidden" data-aos="fade-up" data-aos-delay="300">
+            <div class="absolute top-0 left-0 right-0 h-1" style="background:#a855f7"></div>
+            <div class="text-3xl mb-3">💡</div>
+            <div class="font-display font-800 text-ink-dark mb-1">Ideate</div>
+            <div class="text-xs text-ink-mid">Wireframe & Flow</div>
+          </div>
+          <div class="hidden md:flex items-center text-gray-300 text-2xl">→</div>
+          <div class="flex-1 glass rounded-3xl p-6 card-lift text-center relative overflow-hidden" data-aos="fade-up" data-aos-delay="400">
+            <div class="absolute top-0 left-0 right-0 h-1" style="background:#F97316"></div>
+            <div class="text-3xl mb-3">🧪</div>
+            <div class="font-display font-800 text-ink-dark mb-1">Prototype</div>
+            <div class="text-xs text-ink-mid">Hi-Fi Design</div>
+          </div>
+          <div class="hidden md:flex items-center text-gray-300 text-2xl">→</div>
+          <div class="flex-1 glass rounded-3xl p-6 card-lift text-center relative overflow-hidden" data-aos="fade-up" data-aos-delay="500">
+            <div class="absolute top-0 left-0 right-0 h-1" style="background:#ec4899"></div>
+            <div class="text-3xl mb-3">✅</div>
+            <div class="font-display font-800 text-ink-dark mb-1">Test</div>
+            <div class="text-xs text-ink-mid">Usability Testing</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="empathize" class="py-28 px-6 md:px-12 relative">
+  <div class="absolute inset-0 opacity-40" style="background:radial-gradient(ellipse at 20% 50%,rgba(34,197,94,.08),transparent 60%)"></div>
+  <div class="max-w-7xl mx-auto relative">
+
+    <div class="mb-16">
+      <div class="section-label mb-4" data-aos="fade-up">01 — Empathize</div>
+      <h2 class="font-display font-800 text-4xl md:text-5xl text-ink-dark max-w-2xl" data-aos="fade-up" data-aos-delay="100" style="letter-spacing:-.03em">
+        Memahami <span class="gradient-text">Pengguna</span> Secara Mendalam
+      </h2>
+      <p class="text-ink-mid text-lg mt-4 max-w-xl" data-aos="fade-up" data-aos-delay="200">Kami melakukan riset mendalam melalui wawancara, observasi, dan survei untuk memahami kebutuhan, frustrasi, dan tujuan pengguna sesungguhnya.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-16">
+      <div class="glass rounded-3xl p-8 card-lift" data-aos="fade-up" data-aos-delay="100">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-4" style="background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(34,197,94,.05))">🎤</div>
+        <div class="font-display font-700 text-lg text-ink-dark mb-2">In-depth Interview</div>
+        <div class="text-sm text-ink-mid leading-relaxed">Dilakukan wawancara terstruktur dengan <strong>5 pengguna</strong> dari berbagai latar belakang untuk menggali kebiasaan, kendala, dan harapan mereka saat menggunakan layanan transportasi & pesan antar.</div>
+      </div>
+      <div class="glass rounded-3xl p-8 card-lift" data-aos="fade-up" data-aos-delay="300">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-4" style="background:linear-gradient(135deg,rgba(249,115,22,.15),rgba(249,115,22,.05))">👁</div>
+        <div class="font-display font-700 text-lg text-ink-dark mb-2">Contextual Observation</div>
+        <div class="text-sm text-ink-mid leading-relaxed">Mengamati langsung cara pengguna berinteraksi dengan aplikasi kompetitor dalam konteks nyata, mengidentifikasi pain point dan perilaku yang tidak tersampaikan melalui wawancara.</div>
+      </div>
+    </div>
+
+    <div class="glass rounded-3xl p-8 mb-16" data-aos="fade-up">
+      <div class="font-display font-700 text-xl text-ink-dark mb-4">Research Findings & Insight</div>
+      <div class="w-full overflow-hidden rounded-2xl shadow-premium" style="background:#f1f5f9">
+        <iframe style="border: 1px solid rgba(0, 0, 0, 0.1); width:100%; height:450px;" src="https://embed.figma.com/design/U0Fb6YXKo79TCcweSzPWxm/UI-UX-individu?node-id=0-1&embed-host=share" allowfullscreen></iframe>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="define" class="py-28 px-6 md:px-12 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-30" style="background:radial-gradient(ellipse at 80% 50%,rgba(59,130,246,.1),transparent 60%)"></div>
+  <div class="max-w-7xl mx-auto relative">
+
+    <div class="mb-16">
+      <div class="section-label mb-4" data-aos="fade-up">02 — Define</div>
+      <h2 class="font-display font-800 text-4xl md:text-5xl text-ink-dark max-w-2xl" data-aos="fade-up" data-aos-delay="100" style="letter-spacing:-.03em">
+        Mendefinisikan <span class="gradient-text">Masalah</span> yang Tepat
+      </h2>
+    </div>
+
+    <div class="relative rounded-4xl overflow-hidden mb-16" data-aos="fade-up" data-aos-delay="200">
+      <div class="absolute inset-0" style="background:linear-gradient(135deg,#0F172A,#1e293b)"></div>
+      <div class="absolute top-0 right-0 w-64 h-64 rounded-full opacity-20" style="background:#22C55E;filter:blur(80px)"></div>
+      <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-15" style="background:#3B82F6;filter:blur(60px)"></div>
+      <div class="relative p-10 md:p-14">
+        <div class="text-xs font-700 tracking-widest uppercase mb-6" style="color:#22C55E">Problem Statement</div>
+        <blockquote class="font-display font-800 text-white text-2xl md:text-3xl leading-snug max-w-3xl" style="letter-spacing:-.02em">
+          "Pengguna dari berbagai latar belakang — termasuk lansia dan mereka yang tidak terbiasa teknologi — <span style="color:#22C55E">kesulitan menggunakan aplikasi transportasi</span> karena antarmuka yang kompleks, informasi tarif yang tidak transparan, dan proses pemesanan yang panjang."
+        </blockquote>
+        <div class="flex flex-wrap gap-3 mt-8">
+          <span class="tag-chip">Kompleksitas UI</span>
+          <span class="tag-chip-blue">Transparansi Tarif</span>
+          <span class="tag-chip-orange">Aksesibilitas</span>
+          <span style="background:rgba(168,85,247,.1);color:#a855f7;border:1px solid rgba(168,85,247,.2);border-radius:100px;padding:4px 14px;font-size:.78rem;font-weight:600">Kepercayaan</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="font-display font-700 text-2xl text-ink-dark mb-8" data-aos="fade-up">How Might We...</div>
+      <div class="grid md:grid-cols-3 gap-5">
+        <div class="glass rounded-3xl p-7 card-lift hmw-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="text-2xl mb-3">💵</div>
+          <div class="font-display font-700 text-ink-dark mb-2">Transparansi Tarif</div>
+          <p class="text-sm text-ink-mid leading-relaxed">Bagaimana cara menampilkan tarif yang jelas dan konsisten sejak awal agar pengguna tidak mengalami biaya kejutan atau pembatalan sepihak?</p>
+        </div>
+        <div class="glass rounded-3xl p-7 card-lift hmw-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="text-2xl mb-3">⚡</div>
+          <div class="font-display font-700 text-ink-dark mb-2">Efisiensi Pemesanan</div>
+          <p class="text-sm text-ink-mid leading-relaxed">Bagaimana cara mempercepat proses pemesanan sehingga pengguna terutama saat mendesak bisa mendapatkan kendaraan dalam hitungan detik?</p>
+        </div>
+        <div class="glass rounded-3xl p-7 card-lift hmw-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="text-2xl mb-3">🛡️</div>
+          <div class="font-display font-700 text-ink-dark mb-2">Keamanan Perjalanan</div>
+          <p class="text-sm text-ink-mid leading-relaxed">Bagaimana cara memastikan pengguna khususnya perempuan merasa terlindungi selama perjalanan dengan fitur darurat yang mudah diakses?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ideate" class="py-28 px-6 md:px-12 relative">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-16">
+      <div class="section-label mb-4" data-aos="fade-up">03 — Ideate</div>
+      <h2 class="font-display font-800 text-4xl md:text-5xl text-ink-dark max-w-2xl" data-aos="fade-up" data-aos-delay="100" style="letter-spacing:-.03em">
+        Eksplorasi <span class="gradient-text">Ide & Solusi</span>
+      </h2>
+    </div>
+
+    <div class="mb-20">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <div class="section-label mb-1" data-aos="fade-up">Ideation Phase</div>
+          <h3 class="font-display font-700 text-2xl text-ink-dark" data-aos="fade-up">Crazy 8 & Brainstorming</h3>
+        </div>
+      </div>
+      <div class="w-full overflow-hidden rounded-3xl shadow-premium" data-aos="fade-up" data-aos-delay="100" style="background:#f1f5f9">
+        <iframe style="border: 1px solid rgba(0, 0, 0, 0.1); width:100%; height:450px;" src="https://embed.figma.com/design/U0Fb6YXKo79TCcweSzPWxm/UI-UX-individu?node-id=657-691&embed-host=share" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="mb-20">
+      <div class="section-label mb-1" data-aos="fade-up">Navigation</div>
+      <h3 class="font-display font-700 text-2xl text-ink-dark mb-6" data-aos="fade-up">User Flow</h3>
+      <div class="w-full overflow-hidden rounded-3xl shadow-premium" data-aos="fade-up" data-aos-delay="100" style="background:#f1f5f9">
+        <iframe style="border: 1px solid rgba(0, 0, 0, 0.1); width:100%; height:450px;" src="https://embed.figma.com/design/U0Fb6YXKo79TCcweSzPWxm/UI-UX-individu?node-id=663-703&embed-host=share" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="mb-20">
+      <div class="section-label mb-1" data-aos="fade-up">Structure</div>
+      <h3 class="font-display font-700 text-2xl text-ink-dark mb-6" data-aos="fade-up">Information Architecture</h3>
+      <div class="glass rounded-3xl p-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="img-placeholder" style="height:320px">
+          <div style="font-size:2rem">🏗</div>
+          <div style="font-weight:600;color:#22C55E;font-family:'Manrope',sans-serif">Sitemap / IA Diagram</div>
+          <div style="font-size:.8rem;color:#94a3b8;max-width:200px;text-align:center">Ganti dengan sitemap / information architecture dari Figma</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="prototype" class="py-28 px-6 md:px-12 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-40" style="background:radial-gradient(ellipse at 50% 0%,rgba(34,197,94,.07),transparent 70%)"></div>
+  <div class="max-w-7xl mx-auto relative">
+
+    <div class="text-center mb-16">
+      <div class="section-label mb-4" data-aos="fade-up">04 — Prototype</div>
+      <h2 class="font-display font-800 text-4xl md:text-5xl text-ink-dark" data-aos="fade-up" data-aos-delay="100" style="letter-spacing:-.03em">
+        High Fidelity <span class="gradient-text">Design</span>
+      </h2>
+      <p class="text-ink-mid mt-4 max-w-lg mx-auto" data-aos="fade-up" data-aos-delay="200">Desain akhir yang siap presentasi — bersih, konsisten, dan mudah digunakan oleh semua kalangan.</p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16" data-aos="fade-up">
+      <div class="img-placeholder card-lift" style="height:320px;cursor:zoom-in">
+        <div style="font-size:1.5rem">🎨</div>
+        <div style="font-size:.75rem;color:#22C55E;font-weight:600">Hi-Fi 01</div>
+        <div style="font-size:.7rem;color:#94a3b8">Onboarding</div>
+      </div>
+      <div class="img-placeholder card-lift" style="height:320px;cursor:zoom-in">
+        <div style="font-size:1.5rem">🎨</div>
+        <div style="font-size:.75rem;color:#3B82F6;font-weight:600">Hi-Fi 02</div>
+        <div style="font-size:.7rem;color:#94a3b8">Home Screen</div>
+      </div>
+      <div class="img-placeholder card-lift" style="height:320px;cursor:zoom-in">
+        <div style="font-size:1.5rem">🎨</div>
+        <div style="font-size:.75rem;color:#F97316;font-weight:600">Hi-Fi 03</div>
+        <div style="font-size:.7rem;color:#94a3b8">Order Flow</div>
+      </div>
+      <div class="img-placeholder card-lift" style="height:320px;cursor:zoom-in">
+        <div style="font-size:1.5rem">🎨</div>
+        <div style="font-size:.75rem;color:#a855f7;font-weight:600">Hi-Fi 04</div>
+        <div style="font-size:.7rem;color:#94a3b8">Tracking</div>
+      </div>
+    </div>
+
+    <div data-aos="fade-up" data-aos-delay="100">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <div class="section-label mb-1">Interactive</div>
+          <h3 class="font-display font-700 text-2xl text-ink-dark">Figma Prototype</h3>
+        </div>
+        <a href="https://www.figma.com/proto/U0Fb6YXKo79TCcweSzPWxm/UI-UX-individu?node-id=168-225&p=f&t=C0ETCpwmFsQTYCLs-0&scaling=scale-down&content-scaling=fixed&page-id=150%3A128&starting-point-node-id=150%3A129" target="_blank" class="btn-outline text-sm py-2 px-5">
+          Buka di Figma
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+      <div class="glass rounded-4xl overflow-hidden shadow-premium" style="padding:8px">
+        <iframe 
+          src="https://embed.figma.com/proto/U0Fb6YXKo79TCcweSzPWxm/UI-UX-individu?node-id=168-225&p=f&t=C0ETCpwmFsQTYCLs-0&scaling=scale-down&content-scaling=fixed&page-id=150%3A128&starting-point-node-id=150%3A129&embed-host=share" 
+          style="width:100%;height:820px;border:none;border-radius:24px;background:#f1f5f9" 
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="test" class="py-28 px-6 md:px-12 relative">
+  <div class="absolute inset-0 opacity-30" style="background:radial-gradient(ellipse at 20% 80%,rgba(59,130,246,.08),transparent 60%)"></div>
+  <div class="max-w-7xl mx-auto relative">
+
+    <div class="mb-16">
+      <div class="section-label mb-4" data-aos="fade-up">05 — Test</div>
+      <h2 class="font-display font-800 text-4xl md:text-5xl text-ink-dark max-w-2xl" data-aos="fade-up" data-aos-delay="100" style="letter-spacing:-.03em">
+        Usability <span class="gradient-text">Testing</span>
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 mb-16">
+      <div data-aos="fade-right">
+        <div class="font-display font-700 text-xl text-ink-dark mb-5">Testing Scenario</div>
+        <div class="space-y-4">
+          <div class="glass rounded-2xl p-5 card-lift flex gap-4 items-start">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-700 text-white flex-shrink-0" style="background:linear-gradient(135deg,#22C55E,#16a34a)">1</div>
+            <div>
+              <div class="font-600 text-ink-dark text-sm mb-1">Pesan Ojek Online</div>
+              <div class="text-xs text-ink-mid">Pengguna diminta memesan ojek dari lokasi saat ini ke tujuan tertentu dalam waktu &lt;2 menit</div>
+            </div>
+          </div>
+          <div class="glass rounded-2xl p-5 card-lift flex gap-4 items-start">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-700 text-white flex-shrink-0" style="background:linear-gradient(135deg,#3B82F6,#2563eb)">2</div>
+            <div>
+              <div class="font-600 text-ink-dark text-sm mb-1">Mobil Online</div>
+              <div class="text-xs text-ink-mid">Pengguna memesan transportasi mobil online untuk bepergian kelompok atau saat cuaca hujan</div>
+            </div>
+          </div>
+          <div class="glass rounded-2xl p-5 card-lift flex gap-4 items-start">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-700 text-white flex-shrink-0" style="background:linear-gradient(135deg,#F97316,#ea580c)">3</div>
+            <div>
+              <div class="font-600 text-ink-dark text-sm mb-1">Tiket Kereta Online</div>
+              <div class="text-xs text-ink-mid">Pengguna mencari jadwal perjalanan, menentukan kelas stasiun, memilih kursi, dan checkout tiket</div>
+            </div>
+          </div>
+          <div class="glass rounded-2xl p-5 card-lift flex gap-4 items-start">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-700 text-white flex-shrink-0" style="background:linear-gradient(135deg,#a855f7,#7c3aed)">4</div>
+            <div>
+              <div class="font-600 text-ink-dark text-sm mb-1">Tiket Bus Online</div>
+              <div class="text-xs text-ink-mid">Pengguna membandingkan armada bus antar kota, memilih titik keberangkatan, dan menyelesaikan pembayaran</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4" data-aos="fade-left">
+        <div class="font-display font-700 text-xl text-ink-dark mb-1">User Feedback</div>
+        <div class="space-y-4">
+          <div class="glass rounded-2xl p-5 card-lift">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0)">👤</div>
+              <div>
+                <div class="text-sm font-600 text-ink-dark">Rizky, Mahasiswa</div>
+                <div style="color:#F97316;font-size:.8rem">★★★★★</div>
+              </div>
+            </div>
+            <p class="text-sm text-ink-mid">"Sangat mudah! Proses pesan ojek terasa lebih cepat dari biasanya. Suka desainnya yang bersih."</p>
+          </div>
+          <div class="glass rounded-2xl p-5 card-lift">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm" style="background:linear-gradient(135deg,#fef3c7,#fde68a)">👤</div>
+              <div>
+                <div class="text-sm font-600 text-ink-dark">Bu Sri, Ibu Rumah Tangga</div>
+                <div style="color:#F97316;font-size:.8rem">★★★★☆</div>
+              </div>
+            </div>
+            <p class="text-sm text-ink-mid">"Tulisannya sudah cukup besar. Tapi saya agak bingung di halaman pembayaran pertama kali."</p>
+          </div>
+          <div class="glass rounded-2xl p-5 card-lift">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe)">👤</div>
+              <div>
+                <div class="text-sm font-600 text-ink-dark">Dimas, Profesional</div>
+                <div style="color:#F97316;font-size:.8rem">★★★★★</div>
+              </div>
+            </div>
+            <p class="text-sm text-ink-mid">"Cepat dan responsif. Fitur tracking real-time sudah sangat baik. Cocok untuk keperluan kantor."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass rounded-3xl p-8 mb-16" data-aos="fade-up">
+      <div class="font-display font-700 text-xl text-ink-dark mb-6">Key Findings</div>
+      <div class="grid md:grid-cols-3 gap-5">
+        <div class="flex gap-3 items-start">
+          <div class="w-6 h-6 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center" style="background:#22C55E;color:#fff;font-size:.7rem">✓</div>
+          <div class="text-sm text-ink-mid">85% responden berhasil menyelesaikan pemesanan transportasi harian (Ojek & Mobil) secara mandiri di bawah 60 detik karena alur navigasi yang dipangkas.</div>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div class="w-6 h-6 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center" style="background:#3B82F6;color:#fff;font-size:.7rem">✓</div>
+          <div class="text-sm text-ink-mid">Pemesanan Tiket Jarak Jauh (Kereta & Bus) memiliki tingkat keberhasilan 78%, di mana beberapa pengguna memerlukan konfirmasi ulang visual untuk posisi pemilihan nomor kursi.</div>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div class="w-6 h-6 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center" style="background:#F97316;color:#fff;font-size:.7rem">✓</div>
+          <div class="text-sm text-ink-mid">Skor transparansi tarif meningkat pesat; 92% partisipan merasa terbantu dengan kejelasan rincian estimasi biaya total sebelum menekan tombol konfirmasi.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="impact" class="py-28 px-6 md:px-12 relative overflow-hidden">
+  <div class="relative rounded-4xl overflow-hidden" style="background:linear-gradient(135deg,#0F172A 0%,#1e293b 100%)">
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10" style="background:#22C55E;filter:blur(100px)"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-10" style="background:#3B82F6;filter:blur(80px)"></div>
+
+    <div class="relative px-8 md:px-16 py-20">
+      <div class="text-center mb-16">
+        <div class="section-label mb-4" data-aos="fade-up" style="color:#22C55E">06 — Impact</div>
+        <h2 class="font-display font-800 text-4xl md:text-5xl text-white" data-aos="fade-up" data-aos-delay="100" style="letter-spacing:-.03em">
+          Hasil & <span class="gradient-text">Dampak</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-4 gap-6 mb-16">
+        <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+          <div class="counter-num gradient-text" data-target="92">0</div>
+          <div class="text-2xl font-800 gradient-text -mt-2">%</div>
+          <div class="text-sm mt-2" style="color:rgba(255,255,255,.6)">User Satisfaction Rate</div>
+          <div class="mt-3 h-1.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,.1)">
+            <div class="progress-bar" data-width="92%"></div>
+          </div>
+        </div>
+        <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+          <div class="counter-num gradient-text" data-target="60">0</div>
+          <div class="text-2xl font-800 gradient-text -mt-2">%</div>
+          <div class="text-sm mt-2" style="color:rgba(255,255,255,.6)">Penurunan Error Rate</div>
+          <div class="mt-3 h-1.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,.1)">
+            <div class="progress-bar" data-width="60%"></div>
+          </div>
+        </div>
+        <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+          <div class="counter-num gradient-text" data-target="40">0</div>
+          <div class="text-2xl font-800 gradient-text -mt-2">%</div>
+          <div class="text-sm mt-2" style="color:rgba(255,255,255,.6)">Lebih Cepat Checkout</div>
+          <div class="mt-3 h-1.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,.1)">
+            <div class="progress-bar" data-width="40%"></div>
+          </div>
+        </div>
+        <div class="text-center" data-aos="fade-up" data-aos-delay="400">
+          <div class="counter-num gradient-text" data-target="4.9">0</div>
+          <div class="text-2xl font-800 gradient-text -mt-2">/5</div>
+          <div class="text-sm mt-2" style="color:rgba(255,255,255,.6)">Average User Rating</div>
+          <div class="mt-3 h-1.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,.1)">
+            <div class="progress-bar" data-width="98%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-5" data-aos="fade-up">
+        <div class="rounded-3xl p-7" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+          <div class="text-2xl mb-3">🧭</div>
+          <div class="font-display font-700 text-white mb-2">Navigasi Lebih Intuitif</div>
+          <p class="text-sm" style="color:rgba(255,255,255,.55);line-height:1.6">Arsitektur informasi yang disederhanakan membuat pengguna menemukan layanan yang mereka cari 3x lebih cepat</p>
+        </div>
+        <div class="rounded-3xl p-7" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+          <div class="text-2xl mb-3">🔒</div>
+          <div class="font-display font-700 text-white mb-2">Kepercayaan Meningkat</div>
+          <p class="text-sm" style="color:rgba(255,255,255,.55);line-height:1.6">Transparansi tarif dan informasi driver yang jelas meningkatkan kepercayaan pengguna secara signifikan</p>
+        </div>
+        <div class="rounded-3xl p-7" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+          <div class="text-2xl mb-3">♿</div>
+          <div class="font-display font-700 text-white mb-2">Lebih Inklusif</div>
+          <p class="text-sm" style="color:rgba(255,255,255,.55);line-height:1.6">Desain yang mempertimbangkan kebutuhan lansia dan pengguna non-tech tanpa mengorbankan efisiensi</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reflection" class="py-28 px-6 md:px-12">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-16 items-start">
+      <div>
+        <div class="section-label mb-4" data-aos="fade-up">07 — Reflection</div>
+        <h2 class="font-display font-800 text-4xl md:text-5xl text-ink-dark mb-8" data-aos="fade-up" data-aos-delay="100" style="letter-spacing:-.03em">
+          Pelajaran & <span class="gradient-text">Tantangan</span>
+        </h2>
+
+        <div class="space-y-8">
+          <div data-aos="fade-up" data-aos-delay="200">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm" style="background:rgba(34,197,94,.1);color:#22C55E">📚</div>
+              <div class="font-display font-700 text-ink-dark">Yang Saya Pelajari</div>
+            </div>
+            <p class="text-ink-mid leading-relaxed pl-11">Riset pengguna adalah fondasi segalanya. Satu wawancara yang mendalam bisa mengubah seluruh arah desain. Mendengarkan lebih penting dari asumsi.</p>
+          </div>
+          <div data-aos="fade-up" data-aos-delay="300">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm" style="background:rgba(249,115,22,.1);color:#F97316">⚡</div>
+              <div class="font-display font-700 text-ink-dark">Tantangan Terbesar</div>
+            </div>
+            <p class="text-ink-mid leading-relaxed pl-11">Menyeimbangkan kebutuhan tiga tipe pengguna yang sangat berbeda — dari generasi muda yang tech-savvy hingga lansia yang baru mengenal smartphone — dalam satu antarmuka yang sama.</p>
+          </div>
+          <div data-aos="fade-up" data-aos-delay="400">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm" style="background:rgba(59,130,246,.1);color:#3B82F6">🚀</div>
+              <div class="font-display font-700 text-ink-dark">Langkah Berikutnya</div>
+            </div>
+            <p class="text-ink-mid leading-relaxed pl-11">Iterasi pada halaman pembayaran berdasarkan feedback Bu Sri. Eksplorasi fitur mode aksesibilitas dengan ukuran teks adaptif. Conduct A/B testing untuk dua varian halaman utama.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-5" data-aos="fade-left" data-aos-delay="200">
+        <div class="glass rounded-3xl p-7 card-lift relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-1 h-full" style="background:#22C55E"></div>
+          <div class="font-poppins font-700 text-ink-dark mb-2">Design for edge cases, not just average users</div>
+          <p class="text-sm text-ink-mid">Pengguna yang paling kesulitan akan menentukan kualitas desain kita yang sebenarnya</p>
+        </div>
+        <div class="glass rounded-3xl p-7 card-lift relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-1 h-full" style="background:#3B82F6"></div>
+          <div class="font-poppins font-700 text-ink-dark mb-2">Simplicity is the hardest thing to achieve</div>
+          <p class="text-sm text-ink-mid">Menghapus elemen yang tidak perlu lebih sulit daripada menambahkannya. Setiap pixel harus punya tujuan.</p>
+        </div>
+        <div class="glass rounded-3xl p-7 card-lift relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-1 h-full" style="background:#F97316"></div>
+          <div class="font-poppins font-700 text-ink-dark mb-2">Test early, test often, test with real users</div>
+          <p class="text-sm text-ink-mid">Iterasi cepat dengan testing nyata jauh lebih berharga dari kesempurnaan di atas kertas.</p>
+        </div>
+        <div class="glass rounded-3xl p-7 card-lift relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-1 h-full" style="background:#a855f7"></div>
+          <div class="font-poppins font-700 text-ink-dark mb-2">Accessibility is a feature, not an afterthought</div>
+          <p class="text-sm text-ink-mid">Desain yang inklusif tidak hanya membantu pengguna berkebutuhan khusus — ia membuat semua orang merasa lebih nyaman.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact" class="py-20 px-6 md:px-12 relative overflow-hidden">
+  <div class="absolute inset-0" style="background:linear-gradient(135deg,#0F172A,#1e293b)"></div>
+  <div class="absolute top-0 left-0 right-0 h-px" style="background:linear-gradient(90deg,transparent,rgba(34,197,94,.4),transparent)"></div>
+  <div class="orb w-96 h-96 -bottom-24 -right-24" style="background:#22C55E;opacity:.07"></div>
+  <div class="orb w-64 h-64 -top-16 left-1/3" style="background:#3B82F6;opacity:.07"></div>
+
+  <div class="relative max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-3 gap-12 mb-16">
+      <div>
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-800 font-display text-lg" style="background:linear-gradient(135deg,#22C55E,#3B82F6)">J</div>
+          <span class="font-display font-800 text-white text-xl tracking-tight">JALANIN</span>
+        </div>
+        <p style="color:rgba(255,255,255,.5);font-size:.9rem;line-height:1.7">UI/UX Case Study — Transportasi Online, Pengiriman Barang, dan Pemesanan Makanan yang inklusif dan mudah digunakan.</p>
+      </div>
+
+      <div>
+        <div class="text-xs font-700 tracking-widest uppercase mb-5" style="color:rgba(255,255,255,.3)">Navigasi</div>
+        <div class="space-y-3">
+          <a href="#empathize" class="block text-sm transition-colors" style="color:rgba(255,255,255,.55)" onmouseover="this.style.color='#22C55E'" onmouseout="this.style.color='rgba(255,255,255,.55)'">01 — Empathize</a>
+          <a href="#define" class="block text-sm transition-colors" style="color:rgba(255,255,255,.55)" onmouseover="this.style.color='#22C55E'" onmouseout="this.style.color='rgba(255,255,255,.55)'">02 — Define</a>
+          <a href="#ideate" class="block text-sm transition-colors" style="color:rgba(255,255,255,.55)" onmouseover="this.style.color='#22C55E'" onmouseout="this.style.color='rgba(255,255,255,.55)'">03 — Ideate</a>
+          <a href="#prototype" class="block text-sm transition-colors" style="color:rgba(255,255,255,.55)" onmouseover="this.style.color='#22C55E'" onmouseout="this.style.color='rgba(255,255,255,.55)'">04 — Prototype</a>
+          <a href="#test" class="block text-sm transition-colors" style="color:rgba(255,255,255,.55)" onmouseover="this.style.color='#22C55E'" onmouseout="this.style.color='rgba(255,255,255,.55)'">05 — Test</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="text-xs font-700 tracking-widest uppercase mb-5" style="color:rgba(255,255,255,.3)">Kontak</div>
+        <div class="space-y-4">
+          <div>
+            <div class="text-xs mb-1" style="color:rgba(255,255,255,.3)">Designer</div>
+            <div class="font-display font-700 text-white">Ghiyast Afif</div>
+          </div>
+          <div>
+            <div class="text-xs mb-1" style="color:rgba(255,255,255,.3)">Email</div>
+            <a href="mailto:email@example.com" class="text-sm" style="color:#22C55E">email@example.com</a>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <a href="#" class="w-9 h-9 rounded-xl flex items-center justify-center text-sm transition-all" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)" onmouseover="this.style.background='rgba(34,197,94,.2)';this.style.color='#22C55E'" onmouseout="this.style.background='rgba(255,255,255,.08)';this.style.color='rgba(255,255,255,.7)'">Be</a>
+            <a href="#" class="w-9 h-9 rounded-xl flex items-center justify-center text-sm transition-all" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)" onmouseover="this.style.background='rgba(34,197,94,.2)';this.style.color='#22C55E'" onmouseout="this.style.background='rgba(255,255,255,.08)';this.style.color='rgba(255,255,255,.7)'">Dr</a>
+            <a href="#" class="w-9 h-9 rounded-xl flex items-center justify-center text-sm transition-all" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)" onmouseover="this.style.background='rgba(34,197,94,.2)';this.style.color='#22C55E'" onmouseout="this.style.background='rgba(255,255,255,.08)';this.style.color='rgba(255,255,255,.7)'">Li</a>
+            <a href="#" class="w-9 h-9 rounded-xl flex items-center justify-center text-sm transition-all" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)" onmouseover="this.style.background='rgba(34,197,94,.2)';this.style.color='#22C55E'" onmouseout="this.style.background='rgba(255,255,255,.08)';this.style.color='rgba(255,255,255,.7)'">IG</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t flex flex-col md:flex-row items-center justify-between gap-4 pt-8" style="border-color:rgba(255,255,255,.08)">
+      <div class="text-xs" style="color:rgba(255,255,255,.3)">© 2026 JALANIN UI/UX Case Study. Dibuat dengan ❤️ menggunakan Figma & Manrope.</div>
+      <div class="text-xs" style="color:rgba(255,255,255,.3)">UI/UX Portfolio • Design Thinking • Mobile App</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('page-loader').classList.add('hidden');
+  }, 2000);
+});
+
+AOS.init({
+  duration: 700,
+  easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
+  once: true,
+  offset: 80,
+});
+
+const dot  = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.transform  = `translate(${mx - 4}px, ${my - 4}px)`;
+  ring.style.transform = `translate(${mx - 18}px, ${my - 18}px)`;
+});
+
+document.querySelectorAll('a, button, .card-lift').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    ring.style.width = '56px';
+    ring.style.height = '56px';
+    ring.style.transform = `translate(${mx - 28}px, ${my - 28}px)`;
+    ring.style.borderColor = 'rgba(34,197,94,.8)';
+  });
+  el.addEventListener('mouseleave', () => {
+    ring.style.width = '36px';
+    ring.style.height = '36px';
+    ring.style.borderColor = 'rgba(34,197,94,.5)';
+  });
+});
+
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+function animateCounter(el, target, suffix) {
+  const isDecimal = target % 1 !== 0;
+  const duration = 1800;
+  const start = performance.now();
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const val = isDecimal ? (target * ease).toFixed(1) : Math.round(target * ease);
+    el.textContent = val;
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function runHeroCounters() {
+  animateCounter(document.getElementById('stat1'), 5);
+  animateCounter(document.getElementById('stat2'), 40);
+  animateCounter(document.getElementById('stat3'), 3);
+}
+setTimeout(runHeroCounters, 2200);
+
+const counters = document.querySelectorAll('.counter-num[data-target]');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      animateCounter(el, parseFloat(el.dataset.target));
+      io.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+counters.forEach(c => io.observe(c));
+
+const bars = document.querySelectorAll('.progress-bar');
+const barIO = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const bar = entry.target;
+      setTimeout(() => { bar.style.width = bar.dataset.width; }, 300);
+      barIO.unobserve(bar);
+    }
+  });
+}, { threshold: 0.5 });
+bars.forEach(b => barIO.observe(b));
+
+gsap.registerPlugin(ScrollTrigger);
+gsap.to('.orb', {
+  y: -60,
+  ease: 'none',
+  scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
+});
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const id = a.getAttribute('href');
+    const el = document.querySelector(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
